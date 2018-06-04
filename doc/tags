@@ -1,0 +1,7 @@
+:GenHelp	genhelp.txt	/*:GenHelp*
+:GenReadme	genhelp.txt	/*:GenReadme*
+genhelp	genhelp.txt	/*genhelp*
+genhelp-contents	genhelp.txt	/*genhelp-contents*
+genhelp-fileformat	genhelp.txt	/*genhelp-fileformat*
+genhelp-usage	genhelp.txt	/*genhelp-usage*
+genhelp.vim	genhelp.txt	/*genhelp.vim*
