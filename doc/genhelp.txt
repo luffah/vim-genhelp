@@ -21,6 +21,7 @@ CONTENTS                                                    *genhelp-contents*
 
 1. Usage                                                       |genhelp-usage|
 2. File format                                            |genhelp-fileformat|
+3. Functions                                               |genhelp-functions|
 
 ==============================================================================
 USAGE                                                          *genhelp-usage*
@@ -37,7 +38,6 @@ USAGE                                                          *genhelp-usage*
 FILE FORMAT                                               *genhelp-fileformat*
 
 To work with GenHelp, the vim script format shall be the following : >
-
    " _filename_ -- _desc_
    " @Author:      _author_
    " @License:     _licence_
@@ -79,5 +79,17 @@ To work with GenHelp, the vim script format shall be the following : >
    " @mapping _keys_
    " _text_
 <
+
+
+==============================================================================
+FUNCTIONS                                                  *genhelp-functions*
+
+genhelp#GenHelp(filename)                                 *genhelp#GenHelp()*
+    Generate an help file.
+    Usage : vim -c "call genhelp#GenHelp('path/to/file')"
+
+genhelp#GenReadme(filename, ext)                        *genhelp#GenReadme()*
+    Generate a Readme file.
+    Usage : vim -c "call genhelp#GenReadme('path/to/file', '.md')"
 
 vim:tw=78:ts=8:ft=help:norl:

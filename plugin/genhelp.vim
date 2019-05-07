@@ -352,7 +352,7 @@ fu! s:GenReadme(ext)
   let l:plugpath = substitute(expand('%:p:h'), '/\(autoload\|plugin\).*', '', '')
   let l:plugname = split(l:plugpath, '/')[-1]
   let l:ext = ( len(a:ext) && a:ext[0]!='.' )? '.'.a:ext : a:ext
-  if file_readable(l:plugpath.'/README'.l:ext)
+  if filereadable(l:plugpath.'/README'.l:ext)
     let l:rep = input("README".l:ext." file aleady exists. Force (yes/no) ? ")
     if l:rep !~ 'y\(es\)\?'
       return
@@ -421,6 +421,39 @@ fu! s:GenReadme(ext)
   call setline(1,split(l:content,"\n"))
   0
 endfu
+
+fu! s:open(file)
+  if filereadable(a:file)
+    exe 'tabnew '.a:file
+    return 1
+  else
+    echoerr a:file.' is not readable'
+    return 0
+  endif
+endfu
+
+" @function genhelp#GenHelp(filename)
+" Generate an help file.
+" Usage : vim -c "call genhelp#GenHelp('path/to/file')"
+fu! genhelp#GenHelp(file)
+  if s:open(a:file)
+    autocmd!
+    call s:GenHelp()
+    w
+  endif
+endfu
+
+" @function genhelp#GenReadme(filename, ext)
+" Generate a Readme file.
+" Usage : vim -c "call genhelp#GenReadme('path/to/file', '.md')"
+fu! genhelp#GenReadme(file, ext)
+  if s:open(a:file)
+    autocmd!
+    call s:GenReadme(a:ext)
+    w
+  endif
+endfu
+
 " @Usage :GenHelp
 " Generate an help file from the current file.
 " Tag file will be written once the file is saved.
