@@ -205,15 +205,16 @@ endfu
 fu! s:inline_parser(docref)
   0
   let l:t=[]
-  let l:_begin = search('\c^" @'.a:docref.':','W')
+  let l:_begin = search('\c^" \?@'.a:docref.':','W')
   while l:_begin
     call add(l:t, substitute(getline(l:_begin),'"\s*@'.a:docref.':\s*','',''))
-    let l:_begin = search('\c^" @'.a:docref.':','W')
+    let l:_begin = search('\c^" \?@'.a:docref.':','W')
   endwhile
   return join(l:t,', ').(len(l:t)?"\n":"")
 endfu
 
 "fu! s:common_parser(docref,endsignal,in,out,indent)
+" docref -> doc decorator name preceded by @
 fu! s:common_parser(docref,...)
   if type(a:docref) == type([])
      let l:docref = a:docref[0]
@@ -232,24 +233,25 @@ fu! s:common_parser(docref,...)
   endif
   0
   let l:_content = ''
-  let l:_begin = search('\c^" @'.l:docref,'Wc')
+  let l:_begin = search('\c^" \?@'.l:docref,'Wc') 
   while l:_begin
+    " echo 'found '.getline(l:_begin)[1:]
     let l:_end = search(l:endsignal,'W')
     let l:_content .= join(s:common_format(
           \s:common_subst(getline(l:_begin,l:_end-1)),
           \ l:in, l:out,l:indent),"\n")."\n"
-    let l:_begin = search('\c^" @'.l:docref,'W')
+    let l:_begin = search('\c^" \?@'.l:docref,'W')
   endwhile
   return l:_content
 endfu
 
 fu! s:getline(docref,endsignal)
   let l:lines = []
-  let l:_begin = search('\c^" @'.a:docref,'Wc')
+  let l:_begin = search('\c^" \?@'.a:docref,'Wc')
   while l:_begin
     let l:_end = search(a:endsignal,'W')
     call extend(l:lines, map(getline(l:_begin,l:_end-1),'substitute(v:val,''^"\s*'','''','''')'))
-    let l:_begin = search('\c^" @'.a:docref,'W')
+    let l:_begin = search('\c^" \?@'.a:docref,'W')
   endwhile
   return l:lines
 endfu
@@ -326,6 +328,7 @@ fu! s:GenHelp()
   for l:buf in l:buffers 
     exe 'bu '.l:buf
     " redraw
+    " echo "include ".l:buf
     for [l:tag, l:section, l:docref_regex, l:docend_regex, l:parse_regex, l:print_regex, l:indent] in s:parsing_table_all_files
       call l:toc.add(l:tag,l:section,
             \ s:common_parser(l:docref_regex,l:docend_regex,
