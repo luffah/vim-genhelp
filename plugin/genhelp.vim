@@ -2,12 +2,12 @@
 " @Author:       luffah
 " @License:      GPLv3
 " @Created:      2018-05-19
-" @Last Change:  2018-05-19
-" @Revision:     1
+" @Last Change:  2019-07-01
+" @Revision:     1.1
 " @AsciiArt
 "   .--.                 .-. .-.      .-.
-"  / .-_\_  ___     ___  | | | | ___  | |
-" | | |___|/ o \  ,'_  | | '-' |/ o \ | | .--.
+"  / .-_\_   __     ___  | | | |  __  | |
+" | | |___|.'o \  ,'_  | | '-' |.'o \ | | .--.
 "  \ '-'|   \  '.| | | | | .-. | \  '.| | | o |
 "   '---'    '--''-' '-' '-' '-'  '--''--'| |'
 "                                         | |
@@ -343,7 +343,7 @@ fu! s:GenHelp()
   0
   echomsg "Use ':setf help' to see this buffer as an helpfile."
   echomsg "When this file will be saved, helptags will be generate."
-  au BufWritePost <buffer> helptags %:p:h
+  au BufWritePost <buffer> silent! helptags %:p:h
 endfu
 
 fu! s:GenReadme(ext)

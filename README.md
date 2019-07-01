@@ -10,7 +10,7 @@
 ** genhelp.vim -- Helper script to generate vim help files **
 
 License:     GPLv3
-Last Change: 2018-05-19
+Last Change: 2019-07-01
 ```
 GenHelp generate vim help file for the current script.
 
