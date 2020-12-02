@@ -2,8 +2,8 @@
 " @Author:       luffah
 " @License:      GPLv3
 " @Created:      2018-05-19
-" @Last Change:  2019-07-01
-" @Revision:     1.1
+" @Last Change:  2020-12-02
+" @Revision:     1.2
 " @AsciiArt
 "   .--.                 .-. .-.      .-.
 "  / .-_\_   __     ___  | | | |  __  | |
@@ -109,7 +109,7 @@ let s:parsing_table_all_files = [
       \  '\(g:[a-zA-Z0-9#_]*\)\(.*\)','\n*\1*\2',4],
       \ ['mappings', 'keymappings', '\(mappings\?\|km\)',
       \  '^\s*\("\s*@.*\|[^"].*\)\?$',
-      \  '\([a-zA-Z0-9#]*\)\(.*\)','\n*\1*\2',4],
+      \  '\(\S*\)\(.*\)','\n*\1*\2',4],
       \ ['customize', 'custom settings', 'customize',
       \  '^\s*\("\s*@.*\|[^"].*\)\?$',
       \  '\s*\(.\+\)\s*$','\n\1',0],
