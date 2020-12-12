@@ -2,8 +2,8 @@
                                                                      *genhelp*
  >
       .--.                 .-. .-.      .-.
-     / .-_\_  ___     ___  | | | | ___  | |
-    | | |___|/ o \  ,'_  | | '-' |/ o \ | | .--.
+     / .-_\_   __     ___  | | | |  __  | |
+    | | |___|.'o \  ,'_  | | '-' |.'o \ | | .--.
      \ '-'|   \  '.| | | | | .-. | \  '.| | | o |
       '---'    '--''-' '-' '-' '-'  '--''--'| |'
                                             | |
@@ -11,8 +11,8 @@
 <
 License:     GPLv3
 Author(s):   luffah
-Revision:    1.1
-Last Change: 2019-07-01
+Revision:    1.3
+Last Change: 2020-12-12
 
 GenHelp generate vim help file for the current script.
 

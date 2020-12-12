@@ -2,8 +2,8 @@
 " @Author:       luffah
 " @License:      GPLv3
 " @Created:      2018-05-19
-" @Last Change:  2020-12-02
-" @Revision:     1.2
+" @Last Change:  2020-12-12
+" @Revision:     1.3
 " @AsciiArt
 "   .--.                 .-. .-.      .-.
 "  / .-_\_   __     ___  | | | |  __  | |
@@ -100,7 +100,7 @@ let s:parsing_table_all_files = [
       \  '\(.\+\)','\n\1',0],
       \ ['functions', 'functions', 'function',
       \  '^\s*fu',
-      \  '\([a-zA-Z0-9#]*(\)\(.*\)','\n\1\2%=*\1)*',4],
+      \  '\([a-zA-Z0-9#_]*(\)\(.*\)','\n\1\2%=*\1)*',4],
       \ ['commands', 'commands', 'command',
       \  '^\s*com',
       \  '\([a-zA-Z0-9#:]*\)\(.*\)','\n*\1*\2',4],
@@ -117,8 +117,9 @@ let s:parsing_table_all_files = [
       \  '^\s*\("\s*@.*\|[^"].*\)\?$',
       \  '\(.*\)','\n%=',0]
       \ ]
+let s:page_width=78
 fu! s:right_align(str)
-  return printf("%78s",a:str)
+  return printf("%".s:page_width."s",a:str)
 endfu
 
 
@@ -128,7 +129,6 @@ fu! s:toc(...)
   return l:obj
 endfu
 
-let s:page_width=78
 fu! s:add_toc(ref,name,content,add) dict
   let l:content=""
   if !has_key(self.parts, a:ref)
@@ -178,12 +178,18 @@ fu! s:common_format(strtab,formatin,formatout,indent)
           \substitute(a:strtab[0],'^@\w\+\s\+'.a:formatin, a:formatout,'')
           \,'%=')
   else
-    let l:frstt=[]
+    let l:frstt=['']
   endif
-  let l:frst=len(l:frstt)?(len(l:frstt)>1?
-        \printf("%s%".(s:page_width-len(l:frstt[0]))."s",l:frstt[0],l:frstt[1])
-        \:l:frstt[0]):''
-  call add(l:strtab, l:frst)
+  if len(l:frstt)
+    if len(l:frstt)>1
+      if (len(l:frstt[0]) + len(l:frstt[1])) > s:page_width
+        let l:frstt=[l:frstt[0], printf("%".s:page_width."s",l:frstt[1])]
+      else
+        let l:frstt=[printf("%s%".(s:page_width-len(l:frstt[0]))."s",l:frstt[0],l:frstt[1])]
+      endif
+    endif
+  endif
+  let l:strtab += l:frstt
   for l:i in range(len(a:strtab))[1:]
     if a:strtab[l:i] =~ '^<'
       if a:strtab[l:i] == '<'
