@@ -1,6 +1,7 @@
 *genhelp.vim*    Helper script to generate vim help files
                                                                      *genhelp*
  >
+
       .--.                 .-. .-.      .-.
      / .-_\_   __     ___  | | | |  __  | |
     | | |___|.'o \  ,'_  | | '-' |.'o \ | | .--.
@@ -22,6 +23,7 @@ CONTENTS                                                    *genhelp-contents*
 1. Usage                                                       |genhelp-usage|
 2. File format                                            |genhelp-fileformat|
 3. Functions                                               |genhelp-functions|
+4. Credits                                                   |genhelp-credits|
 
 ==============================================================================
 USAGE                                                          *genhelp-usage*
@@ -61,7 +63,7 @@ To work with GenHelp, the vim script format shall be the following : >
    "     _codeblock_
    "```
 
-   " @Fileformat g:_variablename_
+   " @Fileformat
    " _text_
 
    " @global g:_variablename_
@@ -78,6 +80,10 @@ To work with GenHelp, the vim script format shall be the following : >
 
    " @mapping _keys_
    " _text_
+
+   " @credit _name_ | _url_
+   " _text_
+
 <
 
 
@@ -91,5 +97,14 @@ genhelp#GenHelp(filename)                                 *genhelp#GenHelp()*
 genhelp#GenReadme(filename, ext)                        *genhelp#GenReadme()*
     Generate a Readme file.
     Usage : vim -c "call genhelp#GenReadme('path/to/file', '.md')"
+
+
+==============================================================================
+CREDITS                                                      *genhelp-credits*
+
+Vim help help                                    $VIMRUNTIME/doc/helphelp.txt
+
+Vim help syntax                                   $VIMRUNTIME/syntax/help.vim
+
 
 vim:tw=78:ts=8:ft=help:norl:

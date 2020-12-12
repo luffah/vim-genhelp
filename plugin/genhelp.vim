@@ -40,7 +40,7 @@
 "    "     _codeblock_
 "    "```
 "
-"    " @Fileformat g:_variablename_
+"    " @Fileformat
 "    " _text_
 "
 "    " @global g:_variablename_
@@ -57,7 +57,14 @@
 "
 "    " @mapping _keys_
 "    " _text_
+"
+"    " @credit _name_ | _url_
+"    " _text_
+"
 "```
+" @credit Vim help help | $VIMRUNTIME/doc/helphelp.txt
+" @credit Vim help syntax | $VIMRUNTIME/syntax/help.vim
+"
 " @-------------------------------------------------------------------
 " License: GPLv3
 " Copyright (C) 2018  luffah <luffah@runbox.com>
@@ -104,6 +111,9 @@ let s:parsing_table_all_files = [
       \ ['commands', 'commands', 'command',
       \  '^\s*com',
       \  '\([a-zA-Z0-9#:]*\)\(.*\)','\n*\1*\2',4],
+      \ ['credits', 'credits', 'credit',
+      \  '^\s*\("\s*@.*\|[^"].*\)\?$',
+      \  '\([^|]*\)\(|\([^ ]*\)\)\?','\n\1%=\3',4],
       \ ['globals', 'globals', 'global',
       \  '^\s*\("\s*@.*\|[^"].*\)\?$',
       \  '\(g:[a-zA-Z0-9#_]*\)\(.*\)','\n*\1*\2',4],
@@ -123,13 +133,20 @@ fu! s:right_align(str)
 endfu
 
 
+" define an object for containing all infos
 fu! s:toc(...)
-  let l:obj={'idx_ref':[],'text':"",'add':function('s:add_toc'),
-        \'prefix':get(a:000,0,''),'parts':{},'render':function('s:render')}
+  let l:obj={
+        \'idx_ref':[],
+        \'text':"",
+        \'parts':{},
+        \'prefix':get(a:000,0,''),
+        \'add':function('s:toc_add'),
+        \'render':function('s:toc_render')}
   return l:obj
 endfu
 
-fu! s:add_toc(ref,name,content,add) dict
+" (s:toc method) that add content in parts
+fu! s:toc_add(ref,name,content,add) dict
   let l:content=""
   if !has_key(self.parts, a:ref)
     let self.parts[a:ref]=""
@@ -172,25 +189,26 @@ fu! s:common_subst(strtab)
 endfu
 
 fu! s:common_format(strtab,formatin,formatout,indent)
+  if len(a:strtab) == 0
+    return []
+  endif
   let l:strtab=[]
+  let l:frstt=['']
   if a:strtab[0] =~ '^@\w\+\s\+.*'
     let l:frstt=split(
           \substitute(a:strtab[0],'^@\w\+\s\+'.a:formatin, a:formatout,'')
           \,'%=')
-  else
-    let l:frstt=['']
   endif
-  if len(l:frstt)
-    if len(l:frstt)>1
-      if (len(l:frstt[0]) + len(l:frstt[1])) > s:page_width
-        let l:frstt=[l:frstt[0], printf("%".s:page_width."s",l:frstt[1])]
-      else
-        let l:frstt=[printf("%s%".(s:page_width-len(l:frstt[0]))."s",l:frstt[0],l:frstt[1])]
-      endif
+  if len(l:frstt)>1
+    if (len(l:frstt[0]) + len(l:frstt[1])) > s:page_width
+      let l:frstt=[l:frstt[0], printf("%".s:page_width."s",l:frstt[1])]
+    else
+      let l:frstt=[printf("%s%".(s:page_width-len(l:frstt[0]))."s",l:frstt[0],l:frstt[1])]
     endif
   endif
   let l:strtab += l:frstt
-  for l:i in range(len(a:strtab))[1:]
+  let l:len=len(a:strtab)
+  for l:i in range(l:len)[1:]
     if a:strtab[l:i] =~ '^<'
       if a:strtab[l:i] == '<'
         call add(l:strtab, a:strtab[l:i])
@@ -199,6 +217,8 @@ fu! s:common_format(strtab,formatin,formatout,indent)
               \ '^<',
               \ '<'.repeat(' ',a:indent),''))
       endif
+    elseif l:i == (l:len-1) && a:strtab[l:i] =~ '^\s*$'
+      call add(l:strtab, '')
     else
       call add(l:strtab, substitute(a:strtab[l:i],
             \ '^',
@@ -241,11 +261,12 @@ fu! s:common_parser(docref,...)
   let l:_content = ''
   let l:_begin = search('\c^" \?@'.l:docref,'Wc') 
   while l:_begin
-    " echo 'found '.getline(l:_begin)[1:]
+    echo 'found '.getline(l:_begin)[1:]
     let l:_end = search(l:endsignal,'W')
     let l:_content .= join(s:common_format(
           \s:common_subst(getline(l:_begin,l:_end-1)),
           \ l:in, l:out,l:indent),"\n")."\n"
+    exe (l:_end-1)
     let l:_begin = search('\c^" \?@'.l:docref,'W')
   endwhile
   return l:_content
@@ -269,11 +290,12 @@ fu! s:title_like(title,tags)
   return l:ret."\n"
 endfu
 
-fu! s:render(fname,headtags) dict
+" (s:toc method)
+fu! s:toc_render(fname,headtags) dict
   let l:ret = '*'.a:fname.'*    '.self.parts.titling
   let l:ret.=printf("\n%".s:page_width."s\n",a:headtags)
   if len(self.parts.asciiart)
-    let l:ret.=' >'
+    let l:ret.=" >\n"
     let l:ret.=self.parts.asciiart
     let l:ret.="<\n"
   endif
@@ -318,7 +340,7 @@ fu! s:GenHelp()
   endfor
   let l:toc = s:toc(l:plugname.'-')
   exe 'bu '.l:orig_buf
-  redraw
+  " redraw
   call l:toc.add('titling'  ,'',substitute(getline(1),'^" .* -- \(.*\)','\1',''),0)
   call l:toc.add('license'   ,"License:     " , s:inline_parser('license'),0)
   call l:toc.add('authors'   ,"Author(s):   " , s:inline_parser('author'),0)
@@ -415,6 +437,10 @@ fu! s:GenReadme(ext)
         \     split(s:common_parser(l:parse_h['fileformat']),"\n")
         \     ,l:subst_pre
         \ ),  "\n")
+  let l:creditcontent =join( map(
+        \     split(s:common_parser(l:parse_h['credits']),"\n")
+        \     ,l:subst_pre
+        \ ), "\n")
   if len(l:howtocontent)
     let l:content.="### HOW TO USE IT ?\n"
     let l:content.=l:howtocontent
@@ -422,6 +448,10 @@ fu! s:GenReadme(ext)
   if len(l:prereqcontent)
     let l:content.="\n\n### WHAT I HAVE TO DO BEFORE ?\n"
     let l:content.=l:prereqcontent
+  endif
+  if len(l:creditcontent)
+    let l:content.="\n\n### CREDITS\n"
+    let l:content.=l:creditcontent
   endif
   let l:content.="\n"
   echo " ,-' "

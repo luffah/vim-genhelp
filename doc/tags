@@ -4,6 +4,7 @@ genhelp	genhelp.txt	/*genhelp*
 genhelp#GenHelp()	genhelp.txt	/*genhelp#GenHelp()*
 genhelp#GenReadme()	genhelp.txt	/*genhelp#GenReadme()*
 genhelp-contents	genhelp.txt	/*genhelp-contents*
+genhelp-credits	genhelp.txt	/*genhelp-credits*
 genhelp-fileformat	genhelp.txt	/*genhelp-fileformat*
 genhelp-functions	genhelp.txt	/*genhelp-functions*
 genhelp-usage	genhelp.txt	/*genhelp-usage*
